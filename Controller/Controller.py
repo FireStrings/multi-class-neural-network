@@ -38,7 +38,7 @@ class Controller():
 
     
     def datasetToCsv(self, dados, nomeCsv):
-        with open('Data/'+nomeCsv+'.csv', 'a', newline='') as csvfile:
+        with open('Data/DataTraining/DataSet/'+nomeCsv+'.csv', 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=';')
                 
             for r in dados:
@@ -48,10 +48,14 @@ class Controller():
                     spamwriter.writerow(r)
     
     def getListFiles(self, ext):
-        result = os.popen("ls Data/DataTraining/*." + ext).read()
+        if ext == 'csv':
+            result = os.popen("ls Data/DataTraining/DataSet/*." + ext).read()
+        else:
+            result = os.popen("ls Data/DataTraining/Img/*." + ext).read()
 
         listFiles = result.split('\n')
 
+        del listFiles[-1]
         del listFiles[-1]
 
         return listFiles

@@ -20,7 +20,7 @@ class Main():
 
         for img in listImg:    
             imgDataset = ImgController().toDatasetSoftmax(img)
-            imgName = img.split("Data/DataTraining/")[1]
+            imgName = img.split("Data/DataTraining/Img/")[1]
 
             log.logInfo("Imagem " + imgName + " convertida para dataset")
             
@@ -33,15 +33,15 @@ class Main():
 
     def training(self):
         listCsv = c.getListFiles("csv")
-
+        
         listInputs = []
 
         for _csv in listCsv:   
             listInputs.append(Controller().loadDataset(_csv))
-
+        
         inputTraining = np.array(listInputs)
         
-        outputTraining = np.array(Controller().loadDataset('Data/DataTraining/labelsResult.csv', False))
+        outputTraining = np.array(Controller().loadDataset('Data/DataTraining/DataSet/labelsResult.csv', False))       
         
         CerebroSoftMax(len(listInputs[0])).initProcesso(inputTraining, outputTraining)
 
