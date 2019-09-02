@@ -8,24 +8,15 @@ import numpy as np
 
 class CerebroSoftMax():
 
-    def __init__(self, pesosH=None, pesosO=None, biasH=None, biasO=None):
+    def __init__(self):
         self.log = LogController()
-        self.log.logInfo("\n\n\n\n\n\n\n\n\n\n\n\n\n\nCérebro Ligado!", True)  
-        
-        self.pesosH = pesosH
-        self.pesosO = pesosO
-        self.biasH = biasH
-        self.biasO = biasO
+        self.log.logInfo("\n\n\n\n\n\n\n\n\n\n\n\n\n\nCérebro Ligado!", True)      
 
-        # if isinstance(pesos, np.ndarray):
-        #     self.pesos = pesos
-            
-        # else:
-        #     np.random.seed(1)
-        #     self.pesos = 2 * np.random.random((pesos, 1)) - 1
-            
-        #     self.log.logInfo('Pesos aleatórios:')
-        #     self.log.logInfo(str(self.pesos), True)
+        self.pesosH = None
+        self.pesosO = None
+        self.biasH = None
+        self.biasO = None
+
 
     def sigmoid(self, x):
         return 1/(1+np.exp(-x))
@@ -59,51 +50,58 @@ class CerebroSoftMax():
         return outActv
 
     
-    def training(self, inputTraining , outputTraining, iterations):      
-       
-        a = inputTraining[0]
-        b= inputTraining[1]
-        c = inputTraining[2]
-
-        inputsV = np.vstack([a,b,c])        
-
-        labels = np.array([0]*1 + [1]*1 + [2]*1)
-
-        labelsResult = np.zeros((3, 3))
-
-        for i in range(3):
-            labelsResult[i, labels[i]] = 1
+    def training(self, inputTraining , outputTraining, iterations, pesos=None):    
         
-        print(labelsResult)
-        sys.exit()
-        attributes = inputsV.shape[1]
-        
-        hiddenNodes = 4
-        outputNodes = 3
+        inputTraining = np.array([
+        np.array([0.9, -0.1, -0.8, 0.3, 0.7, -0.2, 0.9, -0.5, 0.6, -0.1]), 
+        np.array([-0.2, -0.4, 0.9, 0.3, -0.8, 0.5, -0.6, 0.4, -0.1, 1]),
+        np.array([-1, 0.3, -0.8, 0.2, 0.4, -0.7, 0.9, -0.1, 0.3, -0.7]),
+        np.array([0, 0.1, -0.6, -0.1, 0.3, -0.5, 0.8, -0.1, 0.4, -0.8]),
+        np.array([0.2, 0.2, -0.3, -0.2, 0.4, -0.6, 0.9, -0.2, 0.7, -0.2]),
+        np.array([0.3, -0.1, -0.4, -0.1, -0.4, 0.6, 0.8, -0.3, -0.5, 0.1]),
+        np.array([0.1, 0.2, -0.8, -0.4, 0.1, 0.5, -0.6, 0.2, -0.5, -0.1]),
+        np.array([-0.1, 0.4, 0.2, -0.9, 0.5, -0.1, 0.6, -0.3, 0.9, 0.1]),
+        np.array([-0.5, -0.2, 0.3, -0.1, 0.4, 0.2, -0.5, 0.9, -0.7, 0.3]),
+        np.array([0.7, 0.1, -0.5, 0.8, -0.3, 0.4, -0.8, 0.7, 0.2, -0.7])
+        ])
 
-        pesosHidden = np.random.rand(attributes,hiddenNodes)
-        biasHidden = np.random.randn(hiddenNodes)
-        pesosOut = np.random.rand(hiddenNodes,outputNodes)        
-        biasOut = np.random.randn(outputNodes)   
-
-        # print(pesosHidden)
-        # print(pesosOut)
-        # print(biasHidden)
-        # print(biasOut)
+        # print(outputTraining)
         # sys.exit()
 
+        inputsV = np.vstack([inputTraining])   
+
+        attributes = inputsV.shape[1]        
+        
+        hiddenNodes = 4
+        outputNodes = len(inputTraining)
+
+        if pesos == None:
+            pesosHidden = np.random.rand(attributes,hiddenNodes)
+            pesosOut = np.random.rand(hiddenNodes,outputNodes)   
+            biasHidden = np.random.randn(hiddenNodes)                 
+            biasOut = np.random.randn(outputNodes)   
+
+        else:
+            pesosHidden = pesos[0]
+            pesosOut = pesos[1]
+            biasHidden = pesos[2]
+            biasOut = pesos[3]
+
+        learningRate = 0.01
         learningRate = 10e-4
 
         errorCost = []
+        outActv = None
 
-        for epoch in range(20000):  
+        for epoch in range(iterations):  
             hiddenSum = np.dot(inputsV, pesosHidden) + biasHidden        
             hiddenActv = self.sigmoid(hiddenSum)
             
             outSum = np.dot(hiddenActv, pesosOut) + biasOut        
-            outActv = self.softmax(outSum)      
-                    
-            diffOutActv = outActv - labelsResult
+            outActv = self.softmax(outSum)   
+
+            
+            diffOutActv = outActv - outputTraining
             sumHiddenActvOut = np.dot(hiddenActv.T, diffOutActv)
 
             sumDiffOutActvPesosOut = np.dot(diffOutActv, pesosOut.T)            
@@ -120,7 +118,7 @@ class CerebroSoftMax():
             biasOut -= learningRate * diffOutActv.sum(axis=0)
 
             if epoch % 200 == 0:
-                loss = np.sum(-labelsResult * np.log(outActv))
+                loss = np.sum(-outputTraining * np.log(outActv))
                 print('Valor da função de custo de erro: ', loss)
                 errorCost.append(loss)
 
@@ -128,18 +126,33 @@ class CerebroSoftMax():
             self.pesosO = pesosOut
             self.biasH = biasHidden
             self.biasO = biasOut
+        # print()
 
-            print(outActv)
+        for i in outActv:
+            
+            print(
+            "{:.16f}".format(float(str(i[0]))) + " " + 
+            "{:.16f}".format(float(str(i[1]))) + " " + 
+            "{:.16f}".format(float(str(i[2]))) + " " + 
+            "{:.16f}".format(float(str(i[3]))) + " " + 
+            "{:.16f}".format(float(str(i[4]))) + " " + 
+            "{:.16f}".format(float(str(i[5]))) + " " + 
+            "{:.16f}".format(float(str(i[6]))) + " " + 
+            "{:.16f}".format(float(str(i[7]))) + " " + 
+            "{:.16f}".format(float(str(i[8]))) + " " + 
+            "{:.16f}".format(float(str(i[9])))
+            )
 
-    def initProcesso(self, inputTraining, outputTraining):
-        self.training(inputTraining, outputTraining, 10000)
+        return loss
+
+    def initProcesso(self, inputTraining, outputTraining, pesos=None):
+        loss = self.training(inputTraining, outputTraining, 1000000, pesos)
 
         # self.log.logInfo('Pesos após treinamento:')
         # self.log.logInfo(str(self.pesos), True)
 
-        Controller().datasetToCsv(self.pesosH, "pesosH")
-        Controller().datasetToCsv(self.pesosO, "pesosO")
-        Controller().datasetToCsv(self.biasH, "biasH")
-        Controller().datasetToCsv(self.biasO, "biasO")
-
-        print("Ok'")
+        # if loss < 5:
+        #     Controller().datasetToCsv(self.pesosH, "pesosH")
+        #     Controller().datasetToCsv(self.pesosO, "pesosO")
+        #     Controller().datasetToCsv(self.biasH, "biasH")
+        #     Controller().datasetToCsv(self.biasO, "biasO")

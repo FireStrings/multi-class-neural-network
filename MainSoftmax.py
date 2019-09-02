@@ -31,9 +31,9 @@ class Main():
             
         log.logInfo("Imagens convertidas em Dataset!\n")
 
-    def training(self):
+    def training(self, loadPesos=False):
         listCsv = c.getListFiles("csv")
-        
+       
         listInputs = []
 
         for _csv in listCsv:   
@@ -41,9 +41,18 @@ class Main():
         
         inputTraining = np.array(listInputs)
         
-        outputTraining = np.array(Controller().loadDataset('Data/DataTraining/DataSet/labelsResult.csv', False))       
+        outputTraining = np.array(Controller().loadDataset('Data/DataTraining/DataSet/labelsResult.csv', False))      
         
-        CerebroSoftMax(len(listInputs[0])).initProcesso(inputTraining, outputTraining)
+        if loadPesos:
+            pesosH = np.array(Controller().loadDataset('Data/DataTraining/DataSet/pesosH.csv', False))
+            pesosO = np.array(Controller().loadDataset('Data/DataTraining/DataSet/pesosO.csv', False))
+            biasH = np.array(Controller().loadDataset('Data/DataTraining/DataSet/biasH.csv'))
+            biasO = np.array(Controller().loadDataset('Data/DataTraining/DataSet/biasO.csv'))
+
+            CerebroSoftMax().initProcesso(inputTraining, outputTraining, [pesosH, pesosO, biasH, biasO])
+
+        else:
+            CerebroSoftMax().initProcesso(inputTraining, outputTraining)
 
     def predict(self, pathToNewInput):      
         
@@ -90,6 +99,3 @@ def _main():
 
 
 _main()
-    
-    
-

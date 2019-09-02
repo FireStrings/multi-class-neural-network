@@ -1,6 +1,7 @@
 from PIL import Image
 import numpy as np
 import sys
+import random
 
 class ImgController():
     
@@ -36,10 +37,11 @@ class ImgController():
         i = 0
         for ix in range(x):
             for iy in range(y):    
-                a = self.norm(np.sum(img.getpixel((ix,iy))))
+                a = self.norm(np.sum(img.getpixel((ix,iy))))        
                 n = np.append(n, a)        
                 i+=1
-        
+        # print(n)
+        # sys.exit()
         return n
     
     def getBlackPercent(self, arrayRGB):
@@ -58,6 +60,11 @@ class ImgController():
         return expA / expA.sum(axis=0, keepdims=True)
 
     def norm(self, x):        
-       c = np.interp(x, (0, 765), (-1, 0.25))
+    #    c = np.interp(x, (0, 765), (-1, 0.25))
+       c = np.interp(x, (0, 765), (-1, 0.31))
 
        return c
+
+    # def norm2(self, x):
+    #     y = ((x - 1) / 1 - 1)/1000
+    #     return y
