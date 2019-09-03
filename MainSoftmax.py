@@ -24,7 +24,7 @@ class Main():
 
             log.logInfo("Imagem " + imgName + " convertida para dataset")
             
-            Controller().datasetToCsv(imgDataset, imgName)
+            Controller().datasetToCsv(imgDataset, 'Data/DataTraining/DataSet/'+imgName+'.csv')
 
             log.logInfo("Dataset " + imgName + " salvo")
     
@@ -58,17 +58,20 @@ class Main():
         
         _input = np.array([Controller().loadDataset(pathToNewInput)])  
 
-        pesosH = np.array(Controller().loadDataset('Data/pesosH.csv', False))
-        pesosO = np.array(Controller().loadDataset('Data/pesosO.csv', False))
-        biasH = np.array(Controller().loadDataset('Data/biasH.csv'))
-        biasO = np.array(Controller().loadDataset('Data/biasO.csv'))
+        pesosH = np.array(Controller().loadDataset('Data/DataTraining/DataSet/pesosH.csv', False))
+        pesosO = np.array(Controller().loadDataset('Data/DataTraining/DataSet/pesosO.csv', False))
+        biasH = np.array(Controller().loadDataset('Data/DataTraining/DataSet/biasH.csv'))
+        biasO = np.array(Controller().loadDataset('Data/DataTraining/DataSet/biasO.csv'))
 
         
         result = CerebroSoftMax().test(_input, pesosH, pesosO, biasH, biasO)
-        print(result)
 
-        precision = round(result[0], 3)*100
-        log.logInfo("...." + str(precision) + "% de certeza que é um numero esperado...")
+        for i in result:
+            for j in range(0,10):
+                v = "{:.16f}".format(float(str(i[j])))[0:7]
+                v = float(v)*100
+
+                print(str(v) + "% de certeza que é um " + str(j) + "\n")
 
 
 main = Main()
@@ -90,11 +93,11 @@ def _main():
         
         newInput = sys.argv[2]
 
-        imgDataset = ImgController().toDatasetSoftmax("Data/DataTraining/"+newInput)
+        imgDataset = ImgController().toDatasetSoftmax("Data/DataTest/Img/"+newInput)
         
-        Controller().datasetToCsv(imgDataset, newInput)
+        Controller().datasetToCsv(imgDataset, 'Data/DataTest/DataSet/'+newInput+'.csv')
 
-        main.predict("Data/"+newInput + ".csv")
+        main.predict("Data/DataTest/DataSet/"+newInput + ".csv")
 
 
 

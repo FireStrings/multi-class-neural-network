@@ -34,6 +34,7 @@ class ImgController():
         y = img.size[1]
 
         n = np.empty([0])      
+        n2 = np.empty([0])      
         i = 0
         for ix in range(x):
             for iy in range(y):    
@@ -42,7 +43,16 @@ class ImgController():
                 i+=1
         # print(n)
         # sys.exit()
-        return n
+        j = 0
+        l = 0
+        for i in range(27,784,28):
+            b = self.norm3(np.sum(n[j:i+1]))
+            n2 = np.append(n2, b) 
+            j=i+1
+            l+=1
+        # print(n2)
+        # sys.exit()
+        return n2
     
     def getBlackPercent(self, arrayRGB):
         l = round(2**(7.65 - np.sum(arrayRGB)/100))
@@ -65,6 +75,13 @@ class ImgController():
 
        return c
 
-    # def norm2(self, x):
-    #     y = ((x - 1) / 1 - 1)/1000
-    #     return y
+    def norm3(self, x):        
+    #    c = np.interp(x, (0, 765), (-1, 0.25))
+       c = np.interp(x, (-10, 10), (-1, 1))
+
+       return c
+
+    def norm2(self, x):
+        print("ADSDASDS")
+        y = ((x - 1) / 1 - 1)/10
+        return y

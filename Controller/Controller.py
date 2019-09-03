@@ -37,8 +37,8 @@ class Controller():
         return dataset
 
     
-    def datasetToCsv(self, dados, nomeCsv):
-        with open('Data/DataTraining/DataSet/'+nomeCsv+'.csv', 'a', newline='') as csvfile:
+    def datasetToCsv(self, dados, path):
+        with open(path, 'a', newline='') as csvfile:
             spamwriter = csv.writer(csvfile, delimiter=';')
                 
             for r in dados:

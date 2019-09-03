@@ -52,18 +52,18 @@ class CerebroSoftMax():
     
     def training(self, inputTraining , outputTraining, iterations, pesos=None):    
         
-        inputTraining = np.array([
-        np.array([0.9, -0.1, -0.8, 0.3, 0.7, -0.2, 0.9, -0.5, 0.6, -0.1]), 
-        np.array([-0.2, -0.4, 0.9, 0.3, -0.8, 0.5, -0.6, 0.4, -0.1, 1]),
-        np.array([-1, 0.3, -0.8, 0.2, 0.4, -0.7, 0.9, -0.1, 0.3, -0.7]),
-        np.array([0, 0.1, -0.6, -0.1, 0.3, -0.5, 0.8, -0.1, 0.4, -0.8]),
-        np.array([0.2, 0.2, -0.3, -0.2, 0.4, -0.6, 0.9, -0.2, 0.7, -0.2]),
-        np.array([0.3, -0.1, -0.4, -0.1, -0.4, 0.6, 0.8, -0.3, -0.5, 0.1]),
-        np.array([0.1, 0.2, -0.8, -0.4, 0.1, 0.5, -0.6, 0.2, -0.5, -0.1]),
-        np.array([-0.1, 0.4, 0.2, -0.9, 0.5, -0.1, 0.6, -0.3, 0.9, 0.1]),
-        np.array([-0.5, -0.2, 0.3, -0.1, 0.4, 0.2, -0.5, 0.9, -0.7, 0.3]),
-        np.array([0.7, 0.1, -0.5, 0.8, -0.3, 0.4, -0.8, 0.7, 0.2, -0.7])
-        ])
+        # inputTraining = np.array([
+        # np.array([0.9, -0.1, -0.8, 0.3, 0.7, -0.2, 0.9, -0.5, 0.6, -0.1]), 
+        # np.array([-0.2, -0.4, 0.9, 0.3, -0.8, 0.5, -0.6, 0.4, -0.1, 1]),
+        # np.array([-1, 0.3, -0.8, 0.2, 0.4, -0.7, 0.9, -0.1, 0.3, -0.7]),
+        # np.array([0, 0.1, -0.6, -0.1, 0.3, -0.5, 0.8, -0.1, 0.4, -0.8]),
+        # np.array([0.2, 0.2, -0.3, -0.2, 0.4, -0.6, 0.9, -0.2, 0.7, -0.2]),
+        # np.array([0.3, -0.1, -0.4, -0.1, -0.4, 0.6, 0.8, -0.3, -0.5, 0.1]),
+        # np.array([0.1, 0.2, -0.8, -0.4, 0.1, 0.5, -0.6, 0.2, -0.5, -0.1]),
+        # np.array([-0.1, 0.4, 0.2, -0.9, 0.5, -0.1, 0.6, -0.3, 0.9, 0.1]),
+        # np.array([-0.5, -0.2, 0.3, -0.1, 0.4, 0.2, -0.5, 0.9, -0.7, 0.3]),
+        # np.array([0.7, 0.1, -0.5, 0.8, -0.3, 0.4, -0.8, 0.7, 0.2, -0.7])
+        # ])
 
         # print(outputTraining)
         # sys.exit()
@@ -87,7 +87,7 @@ class CerebroSoftMax():
             biasHidden = pesos[2]
             biasOut = pesos[3]
 
-        learningRate = 0.01
+        # learningRate = 0.0001
         learningRate = 10e-4
 
         errorCost = []
@@ -151,8 +151,7 @@ class CerebroSoftMax():
         # self.log.logInfo('Pesos após treinamento:')
         # self.log.logInfo(str(self.pesos), True)
 
-        # if loss < 5:
-        #     Controller().datasetToCsv(self.pesosH, "pesosH")
-        #     Controller().datasetToCsv(self.pesosO, "pesosO")
-        #     Controller().datasetToCsv(self.biasH, "biasH")
-        #     Controller().datasetToCsv(self.biasO, "biasO")
+        # Controller().datasetToCsv(self.pesosH, "pesosH")
+        # Controller().datasetToCsv(self.pesosO, "pesosO")
+        # Controller().datasetToCsv(self.biasH, "biasH")
+        # Controller().datasetToCsv(self.biasO, "biasO")
