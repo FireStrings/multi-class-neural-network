@@ -51,12 +51,13 @@ class Controller():
         if ext == 'csv':
             result = os.popen("ls Data/DataTraining/DataSet/[0-9]*." + ext).read()
         else:
-            result = os.popen("ls Data/DataTraining/Img/*." + ext).read()
+            result = os.popen("ls Data/DataTraining/Img/[0-9]*." + ext).read()
+            
 
         listFiles = result.split('\n')
 
         del listFiles[-1]
-
+        
         return listFiles
 
 

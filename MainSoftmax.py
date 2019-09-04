@@ -17,18 +17,27 @@ class Main():
     
     def createDataSets(self):
         listImg = c.getListFiles("jpg")
+        listOut = []
 
         for img in listImg:    
             imgDataset = ImgController().toDatasetSoftmax(img)
             
             imgName = img.split("Data/DataTraining/Img/")[1]
+            imgNumber = int(imgName.split('_')[0])
 
+            
             log.logInfo("Imagem " + imgName + " convertida para dataset")
             
             Controller().datasetToCsv(imgDataset, 'Data/DataTraining/DataSet/'+imgName+'.csv')
 
             log.logInfo("Dataset " + imgName + " salvo")
-    
+            l = np.zeros(10,  dtype=np.int)
+
+            l[imgNumber] = 1
+            listOut.append(l)
+
+        
+        Controller().datasetToCsv(listOut, 'Data/DataTraining/DataSet/labelsResult.csv')
             
         log.logInfo("Imagens convertidas em Dataset!\n")
 
@@ -88,8 +97,8 @@ def _main():
 
     elif option == '1':
         
-        loadPesos = bool(sys.argv[2])
-
+        loadPesos = eval(sys.argv[2])
+   
         main.training(loadPesos)        
 
     elif option == '2':
@@ -97,6 +106,7 @@ def _main():
         newInput = sys.argv[2]
 
         imgDataset = ImgController().toDatasetSoftmax("Data/DataTest/Img/"+newInput)
+
         
         Controller().datasetToCsv(imgDataset, 'Data/DataTest/DataSet/'+newInput+'.csv')
 

@@ -41,7 +41,6 @@ class ImgController():
                 a = self.norm(np.sum(img.getpixel((ix,iy))))        
                 n = np.append(n, a)        
                 i+=1
-     
         return n
     
     

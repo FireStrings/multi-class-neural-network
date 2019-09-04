@@ -54,7 +54,7 @@ class CerebroSoftMax():
         attributes = inputsV.shape[1]        
         
         hiddenNodes = 4
-        outputNodes = len(inputTraining)
+        outputNodes = 10
 
         if pesos == None:
             pesosHidden = np.random.rand(attributes,hiddenNodes)
@@ -82,6 +82,8 @@ class CerebroSoftMax():
             outSum = np.dot(hiddenActv, pesosOut) + biasOut        
             outActv = self.softmax(outSum)   
 
+            # print(outputTraining)
+            # print(outActv)
             
             diffOutActv = outActv - outputTraining
             sumHiddenActvOut = np.dot(hiddenActv.T, diffOutActv)
