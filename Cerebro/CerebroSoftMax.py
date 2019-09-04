@@ -82,9 +82,6 @@ class CerebroSoftMax():
             outSum = np.dot(hiddenActv, pesosOut) + biasOut        
             outActv = self.softmax(outSum)   
 
-            # print(outputTraining)
-            # print(outActv)
-            
             diffOutActv = outActv - outputTraining
             sumHiddenActvOut = np.dot(hiddenActv.T, diffOutActv)
 
