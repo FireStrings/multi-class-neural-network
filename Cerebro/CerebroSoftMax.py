@@ -28,19 +28,16 @@ class CerebroSoftMax():
         expA = np.exp(A)
         return expA / expA.sum(axis=1, keepdims=True)
 
-    def test(self, newInput, pesosH, pesosO, biasH, biasO):        
+    def predict(self, newInput, pesosH, pesosO, biasH, biasO):        
         
         pesosHidden = pesosH
         pesosOut = pesosO
         biasHidden = biasH            
         biasOut = biasO
 
+        inputsV = np.vstack([newInput]) 
 
-        inputsV = np.vstack([newInput])
         
-        hiddenNodes = 4
-        outputNodes = 3
-
         hiddenSum = np.dot(inputsV, pesosHidden) + biasHidden        
         hiddenActv = self.sigmoid(hiddenSum)
         
@@ -52,22 +49,6 @@ class CerebroSoftMax():
     
     def training(self, inputTraining , outputTraining, iterations, pesos=None):    
         
-        # inputTraining = np.array([
-        # np.array([0.9, -0.1, -0.8, 0.3, 0.7, -0.2, 0.9, -0.5, 0.6, -0.1]), 
-        # np.array([-0.2, -0.4, 0.9, 0.3, -0.8, 0.5, -0.6, 0.4, -0.1, 1]),
-        # np.array([-1, 0.3, -0.8, 0.2, 0.4, -0.7, 0.9, -0.1, 0.3, -0.7]),
-        # np.array([0, 0.1, -0.6, -0.1, 0.3, -0.5, 0.8, -0.1, 0.4, -0.8]),
-        # np.array([0.2, 0.2, -0.3, -0.2, 0.4, -0.6, 0.9, -0.2, 0.7, -0.2]),
-        # np.array([0.3, -0.1, -0.4, -0.1, -0.4, 0.6, 0.8, -0.3, -0.5, 0.1]),
-        # np.array([0.1, 0.2, -0.8, -0.4, 0.1, 0.5, -0.6, 0.2, -0.5, -0.1]),
-        # np.array([-0.1, 0.4, 0.2, -0.9, 0.5, -0.1, 0.6, -0.3, 0.9, 0.1]),
-        # np.array([-0.5, -0.2, 0.3, -0.1, 0.4, 0.2, -0.5, 0.9, -0.7, 0.3]),
-        # np.array([0.7, 0.1, -0.5, 0.8, -0.3, 0.4, -0.8, 0.7, 0.2, -0.7])
-        # ])
-
-        # print(outputTraining)
-        # sys.exit()
-
         inputsV = np.vstack([inputTraining])   
 
         attributes = inputsV.shape[1]        
@@ -87,14 +68,15 @@ class CerebroSoftMax():
             biasHidden = pesos[2]
             biasOut = pesos[3]
 
-        # learningRate = 0.0001
         learningRate = 10e-4
 
+        
         errorCost = []
         outActv = None
 
         for epoch in range(iterations):  
-            hiddenSum = np.dot(inputsV, pesosHidden) + biasHidden        
+            hiddenSum = np.dot(inputsV, pesosHidden) + biasHidden      
+  
             hiddenActv = self.sigmoid(hiddenSum)
             
             outSum = np.dot(hiddenActv, pesosOut) + biasOut        
@@ -126,8 +108,7 @@ class CerebroSoftMax():
             self.pesosO = pesosOut
             self.biasH = biasHidden
             self.biasO = biasOut
-        # print()
-
+     
         for i in outActv:
             
             print(
@@ -148,10 +129,7 @@ class CerebroSoftMax():
     def initProcesso(self, inputTraining, outputTraining, pesos=None):
         loss = self.training(inputTraining, outputTraining, 1000000, pesos)
 
-        # self.log.logInfo('Pesos após treinamento:')
-        # self.log.logInfo(str(self.pesos), True)
-
-        # Controller().datasetToCsv(self.pesosH, "pesosH")
-        # Controller().datasetToCsv(self.pesosO, "pesosO")
-        # Controller().datasetToCsv(self.biasH, "biasH")
-        # Controller().datasetToCsv(self.biasO, "biasO")
+        Controller().datasetToCsv(self.pesosH, 'Data/DataTraining/DataSet/pesosH.csv')
+        Controller().datasetToCsv(self.pesosO, 'Data/DataTraining/DataSet/pesosO.csv')
+        Controller().datasetToCsv(self.biasH, 'Data/DataTraining/DataSet/biasH.csv')
+        Controller().datasetToCsv(self.biasO, 'Data/DataTraining/DataSet/biasO.csv')

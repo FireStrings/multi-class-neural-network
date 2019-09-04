@@ -20,6 +20,7 @@ class Main():
 
         for img in listImg:    
             imgDataset = ImgController().toDatasetSoftmax(img)
+            
             imgName = img.split("Data/DataTraining/Img/")[1]
 
             log.logInfo("Imagem " + imgName + " convertida para dataset")
@@ -64,7 +65,7 @@ class Main():
         biasO = np.array(Controller().loadDataset('Data/DataTraining/DataSet/biasO.csv'))
 
         
-        result = CerebroSoftMax().test(_input, pesosH, pesosO, biasH, biasO)
+        result = CerebroSoftMax().predict(_input, pesosH, pesosO, biasH, biasO)
 
         for i in result:
             for j in range(0,10):
@@ -87,7 +88,9 @@ def _main():
 
     elif option == '1':
         
-        main.training()
+        loadPesos = bool(sys.argv[2])
+
+        main.training(loadPesos)        
 
     elif option == '2':
         

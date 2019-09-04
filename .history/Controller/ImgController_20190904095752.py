@@ -39,11 +39,23 @@ class ImgController():
         for ix in range(x):
             for iy in range(y):    
                 a = self.norm(np.sum(img.getpixel((ix,iy))))        
+                # a = self.getBlackPercentSoftMax(np.sum(img.getpixel((ix,iy))))  
                 n = np.append(n, a)        
                 i+=1
-     
+        print(n)
+        sys.exit()
         return n
     
+        # j = 0
+        # l = 0
+        # for i in range(27,784,28):
+        #     b = self.norm3(np.sum(n[j:i+1]))
+        #     n2 = np.append(n2, b) 
+        #     j=i+1
+        #     l+=1
+        # # print(n2)
+        # # sys.exit()
+        # return n2
     
     def getBlackPercent(self, arrayRGB):
         l = round(2**(7.65 - np.sum(arrayRGB)/100))
