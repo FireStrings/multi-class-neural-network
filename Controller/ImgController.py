@@ -1,3 +1,4 @@
+
 from PIL import Image
 import numpy as np
 import sys
@@ -13,7 +14,6 @@ class ImgController():
 
         x = img.size[0]
         y = img.size[1]
-
         n = np.empty([0])      
 
         for ix in range(x):
@@ -32,6 +32,11 @@ class ImgController():
 
         x = img.size[0]
         y = img.size[1]
+
+        if x != 28 or y != 28:
+            img = self.resizeImg(img, True)
+            x = img.size[0]
+            y = img.size[1]
 
         n = np.empty([0])      
         n2 = np.empty([0])      
@@ -74,3 +79,20 @@ class ImgController():
     def norm2(self, x):
         y = ((x - 3) / 3 - 3)/1000
         return y
+
+    def resizeImg(self, img, save=False):
+        # wpercent = (28 / float(img.size[0]))
+        # hsize = int((float(img.size[1]) * float(wpercent)))
+        img = img.resize((28, 28), Image.ANTIALIAS)
+
+        if save:
+            img.save('Data/DataTest/Img/2_resized.jpg')
+        return img
+
+    def cropImg(self, img):
+        img = Image.open('../Data/DataTest/Img/a.jpg')
+        imgCropped = img.crop((100,30,400,300))
+        imgCropped.save('../Data/DataTest/Img/cropped.jpg')
+        
+
+# ImgController().cropImg(None)
