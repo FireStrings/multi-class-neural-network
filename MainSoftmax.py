@@ -16,7 +16,7 @@ class Main():
         super()
     
     def createDataSets(self):
-        listImg = c.getListFiles("jpg")
+        listImg = c.getListFiles("Data/DataTraining/Img/[0-9]*.")
         listOut = []
 
         for img in listImg:    
@@ -40,7 +40,7 @@ class Main():
         log.info("Imagens convertidas em Dataset!\n")
 
     def training(self, loadPesos=False):
-        listCsv = c.getListFiles("csv")
+        listCsv = c.getListFiles("Data/DataTraining/DataSet/[0-9]*.")
        
         listInputs = []
 
@@ -85,7 +85,7 @@ class Main():
 
 main = Main()
 def _main():
-
+   
     option = sys.argv[1]    
 
     log.info("Processo Iniciado com o argumento " + option + "\n")
@@ -105,7 +105,7 @@ def _main():
 
         imgDataset = ImgController().toDatasetSoftmax("Data/DataTest/Img/"+newInput)
         
-        Controller().datasetToCsv(imgDataset, 'Data/DataTest/DataSet/'+newInput+'.csv')
+        c.datasetToCsv(imgDataset, 'Data/DataTest/DataSet/'+newInput+'.csv')
 
         main.predict("Data/DataTest/DataSet/"+newInput + ".csv")
 

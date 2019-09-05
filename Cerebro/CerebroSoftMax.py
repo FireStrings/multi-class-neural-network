@@ -59,7 +59,7 @@ class CerebroSoftMax():
     def errorCostFunction(self, outputTraining, outActv):
         return np.sum(-outputTraining * np.log(outActv))
     
-    def backpropagation(self, outActv, outputTraining, hiddenActv, hiddenSum, inputsV, learningRate, epoch):
+    def backropagation(self, outActv, outputTraining, hiddenActv, hiddenSum, inputsV, learningRate, epoch):
         diffOutActv = outActv - outputTraining
         sumHiddenActvOut = np.dot(hiddenActv.T, diffOutActv)
 
@@ -82,7 +82,9 @@ class CerebroSoftMax():
             print('Valor da função de custo de erro: ' + str(loss), end="\r")
 
     def training(self, inputTraining , outputTraining, pesos=None):    
-        
+
+        log.info('Inicio do treinamento...')
+        print('Inicio do treinamento...')
         inputsV = np.vstack([inputTraining])   
 
         attributes = inputsV.shape[1]  

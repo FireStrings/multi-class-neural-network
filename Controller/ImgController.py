@@ -1,5 +1,5 @@
 
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 import sys
 import random
@@ -93,6 +93,9 @@ class ImgController():
         img = Image.open('../Data/DataTest/Img/a.jpg')
         imgCropped = img.crop((100,30,400,300))
         imgCropped.save('../Data/DataTest/Img/cropped.jpg')
-        
 
-# ImgController().cropImg(None)
+    
+    def toNegative(self, pathOld, pathNew):
+        img = Image.open(pathOld)
+        im_invert = ImageOps.invert(img)
+        im_invert.save(pathNew, quality=100)
