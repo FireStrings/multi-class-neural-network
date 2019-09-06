@@ -1,4 +1,5 @@
-from PIL import Image
+
+from PIL import Image, ImageOps
 import numpy as np
 import sys
 import random
@@ -13,7 +14,6 @@ class ImgController():
 
         x = img.size[0]
         y = img.size[1]
-
         n = np.empty([0])      
 
         for ix in range(x):
@@ -32,6 +32,11 @@ class ImgController():
 
         x = img.size[0]
         y = img.size[1]
+
+        if x != 28 or y != 28:
+            img = self.resizeImg(img, True)
+            x = img.size[0]
+            y = img.size[1]
 
         n = np.empty([0])      
         n2 = np.empty([0])      
@@ -74,3 +79,26 @@ class ImgController():
     def norm2(self, x):
         y = ((x - 3) / 3 - 3)/1000
         return y
+
+    def resizeImg(self, img, save=False):
+        # wpercent = (28 / float(img.size[0]))
+        # hsize = int((float(img.size[1]) * float(wpercent)))
+        img = img.resize((28, 28), Image.ANTIALIAS)
+
+        if save:
+            img.save('Data/DataTest/Img/2_resized.jpg')
+        return img
+
+    def cropImg(self, img):
+        img = Image.open('../Data/DataTest/Img/captcha.jpg')
+        # imgCropped = img.crop((50,15,200,40)) #odo o  numero
+        imgCropped = img.crop((50,15,80,40)) 
+        imgCropped.save('../Data/DataTest/Img/cropped_captcha.jpg')
+
+    
+    def toNegative(self, pathOld, pathNew):
+        img = Image.open(pathOld)
+        im_invert = ImageOps.invert(img)
+        im_invert.save(pathNew, quality=100)
+
+# ImgController().cropImg(None)

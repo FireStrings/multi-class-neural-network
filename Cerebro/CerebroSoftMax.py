@@ -6,18 +6,19 @@ from Controller.Controller import Controller
 import traceback
 import numpy as np
 
+log = LogController.getLogger()
+
 class CerebroSoftMax():
 
     def __init__(self):
-        self.log = LogController()
-        self.log.logInfo("\n\n\n\n\n\n\n\n\n\n\n\n\n\nCérebro Ligado!", True)      
+       
+        log.info("Cérebro Ligado!")
 
         self.pesosH = None
         self.pesosO = None
         self.biasH = None
         self.biasO = None
-
-
+        
     def sigmoid(self, x):
         return 1/(1+np.exp(-x))
 
@@ -36,7 +37,6 @@ class CerebroSoftMax():
         biasOut = biasO
 
         inputsV = np.vstack([newInput]) 
-
         
         hiddenSum = np.dot(inputsV, pesosHidden) + biasHidden        
         hiddenActv = self.sigmoid(hiddenSum)
@@ -46,88 +46,93 @@ class CerebroSoftMax():
 
         return outActv
 
-    
-    def training(self, inputTraining , outputTraining, iterations, pesos=None):    
+    def activation(self, inputsV):
         
+        hiddenSum = np.dot(inputsV, self.pesosH) + self.biasH  
+        
+        hiddenActv = self.sigmoid(hiddenSum)
+        
+        outSum = np.dot(hiddenActv, self.pesosO) + self.biasO        
+        outActv = self.softmax(outSum)  
+
+        return  hiddenSum, hiddenActv, outActv
+    
+    def errorCostFunction(self, outputTraining, outActv):
+        return np.sum(-outputTraining * np.log(outActv))
+    
+    def backpropagation(self, outActv, outputTraining, hiddenActv, hiddenSum, inputsV, learningRate, epoch):
+        diffOutActv = outActv - outputTraining
+      
+        sumHiddenActvOut = np.dot(hiddenActv.T, diffOutActv)
+
+        sumDiffOutActvPesosOut = np.dot(diffOutActv, self.pesosO.T)            
+
+        sigDer = self.sigmoidDerivate(hiddenSum)
+        sumInputsSigDer = np.dot(inputsV.T, sigDer * sumDiffOutActvPesosOut)
+
+        dotSigDer = sumDiffOutActvPesosOut * sigDer
+
+        self.pesosH -= learningRate * sumInputsSigDer
+        self.biasH -= learningRate * dotSigDer.sum(axis=0)
+
+        self.pesosO -= learningRate * sumHiddenActvOut
+        self.biasO -= learningRate * diffOutActv.sum(axis=0)
+
+        if epoch % 200 == 0:
+            loss = self.errorCostFunction(outputTraining, outActv)
+            log.info('Valor da função de custo de erro: ' + str(loss))
+            print('Valor da função de custo de erro: ' + str(loss), end="\r")
+
+    def training(self, inputTraining , outputTraining, pesos=None):    
+
+        log.info('Inicio do treinamento...')
+        print('Inicio do treinamento...')
         inputsV = np.vstack([inputTraining])   
 
-        attributes = inputsV.shape[1]        
-        
+        attributes = inputsV.shape[1]  
+
         hiddenNodes = 4
-        outputNodes = 10
+        outputNodes = outputTraining.shape[1]
+        
 
         if pesos == None:
-            pesosHidden = np.random.rand(attributes,hiddenNodes)
-            pesosOut = np.random.rand(hiddenNodes,outputNodes)   
-            biasHidden = np.random.randn(hiddenNodes)                 
-            biasOut = np.random.randn(outputNodes)   
+            self.pesosH = np.random.rand(attributes,hiddenNodes)
+            self.pesosO = np.random.rand(hiddenNodes,outputNodes)   
+            self.biasH = np.random.randn(hiddenNodes)                 
+            self.biasO = np.random.randn(outputNodes)   
 
         else:
-            pesosHidden = pesos[0]
-            pesosOut = pesos[1]
-            biasHidden = pesos[2]
-            biasOut = pesos[3]
+            self.pesosH = pesos[0]
+            self.pesosO = pesos[1]
+            self.biasH = pesos[2]
+            self.biasO = pesos[3]
 
-        learningRate = 10e-4
+        learningRate = 10e-4        
 
-        
-        errorCost = []
-        outActv = None
-
-        for epoch in range(iterations):  
-            hiddenSum = np.dot(inputsV, pesosHidden) + biasHidden      
-  
-            hiddenActv = self.sigmoid(hiddenSum)
+        for epoch in range(1000000):  
             
-            outSum = np.dot(hiddenActv, pesosOut) + biasOut        
-            outActv = self.softmax(outSum)   
+            hiddenSum, hiddenActv, outActv = self.activation(inputsV)
+            self.backpropagation(outActv, outputTraining, hiddenActv, hiddenSum, inputsV, learningRate, epoch)
 
-            diffOutActv = outActv - outputTraining
-            sumHiddenActvOut = np.dot(hiddenActv.T, diffOutActv)
+        self.storeLearning()       
 
-            sumDiffOutActvPesosOut = np.dot(diffOutActv, pesosOut.T)            
-
-            sigDer = self.sigmoidDerivate(hiddenSum)
-            sumInputsSigDer = np.dot(inputsV.T, sigDer * sumDiffOutActvPesosOut)
-
-            dotSigDer = sumDiffOutActvPesosOut * sigDer
-
-            pesosHidden -= learningRate * sumInputsSigDer
-            biasHidden -= learningRate * dotSigDer.sum(axis=0)
-
-            pesosOut -= learningRate * sumHiddenActvOut
-            biasOut -= learningRate * diffOutActv.sum(axis=0)
-
-            if epoch % 200 == 0:
-                loss = np.sum(-outputTraining * np.log(outActv))
-                print('Valor da função de custo de erro: ', loss)
-                errorCost.append(loss)
-
-            self.pesosH = pesosHidden
-            self.pesosO = pesosOut
-            self.biasH = biasHidden
-            self.biasO = biasOut
-     
+    def printResultActv(self, outActv):
         for i in outActv:
-            
-            print(
-            "{:.16f}".format(float(str(i[0]))) + " " + 
-            "{:.16f}".format(float(str(i[1]))) + " " + 
-            "{:.16f}".format(float(str(i[2]))) + " " + 
-            "{:.16f}".format(float(str(i[3]))) + " " + 
-            "{:.16f}".format(float(str(i[4]))) + " " + 
-            "{:.16f}".format(float(str(i[5]))) + " " + 
-            "{:.16f}".format(float(str(i[6]))) + " " + 
-            "{:.16f}".format(float(str(i[7]))) + " " + 
-            "{:.16f}".format(float(str(i[8]))) + " " + 
-            "{:.16f}".format(float(str(i[9])))
-            )
+            log.info(self.convertSciToDec(i[0])) 
+            log.info(self.convertSciToDec(i[1])) 
+            log.info(self.convertSciToDec(i[2])) 
+            log.info(self.convertSciToDec(i[3])) 
+            log.info(self.convertSciToDec(i[4])) 
+            log.info(self.convertSciToDec(i[5])) 
+            log.info(self.convertSciToDec(i[6])) 
+            log.info(self.convertSciToDec(i[7])) 
+            log.info(self.convertSciToDec(i[8])) 
+            log.info(self.convertSciToDec(i[9])) 
 
-        return loss
+    def convertSciToDec(self, value):
+        return "{:.16f}".format(float(str(value)))
 
-    def initProcesso(self, inputTraining, outputTraining, pesos=None):
-        loss = self.training(inputTraining, outputTraining, 1000000, pesos)
-
+    def storeLearning(self):
         Controller().datasetToCsv(self.pesosH, 'Data/DataTraining/DataSet/pesosH.csv')
         Controller().datasetToCsv(self.pesosO, 'Data/DataTraining/DataSet/pesosO.csv')
         Controller().datasetToCsv(self.biasH, 'Data/DataTraining/DataSet/biasH.csv')

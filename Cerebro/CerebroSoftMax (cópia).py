@@ -34,9 +34,9 @@ class CerebroSoftMax():
     
     def training(self,inputTraining , outputTraining, iterations):
 
-        # Imgs1 = np.random.randn(1, 10) + np.array([0.9, 0.1, 0.8, 0.3, 0.7, 0.2, 0.9, 0.5, 0.6, 0.1])
-        # Imgs2 = np.random.randn(1, 10) + np.array([0.2, 0.4, 0.9, 0.3, 0.8, 0.5, 0.6, 0.4, 0.1, 1])
-        # Imgs3 = np.random.randn(1, 10) + np.array([1, 0.3, 0.8, 0.2, 0.4, 0.7, 0.9, 0.1, 0.3, 0.7])
+        Imgs1 = np.random.randn(1, 10) + np.array([0.9, 0.1, 0.8, 0.3, 0.7, 0.2, 0.9, 0.5, 0.6, 0.1])
+        Imgs2 = np.random.randn(1, 10) + np.array([0.2, 0.4, 0.9, 0.3, 0.8, 0.5, 0.6, 0.4, 0.1, 1])
+        Imgs3 = np.random.randn(1, 10) + np.array([1, 0.3, 0.8, 0.2, 0.4, 0.7, 0.9, 0.1, 0.3, 0.7])
 
 
         # Imgs1 = np.array([0.9, -0.1, -0.8, 0.3, 0.7, -0.2, 0.9, -0.5, 0.6, -0.1])
@@ -78,7 +78,7 @@ class CerebroSoftMax():
         # print()
         # print(c)
         # sys.exit()    
-        inputsV = np.vstack([a,b,c])
+        inputsV = np.vstack([Imgs1,Imgs2,Imgs3])
 
         # print(inputsV)
         
@@ -129,7 +129,13 @@ class CerebroSoftMax():
             diffOutActv = outActv - labelsResult
             sumHiddenActvOut = np.dot(hiddenActv.T, diffOutActv)
 
-            sumDiffOutActvPesosOut = np.dot(diffOutActv, pesosOut.T)            
+            sumDiffOutActvPesosOut = np.dot(diffOutActv, pesosOut.T) 
+            print(outActv)
+            print()
+            print(labelsResult)
+            print()
+            print(hiddenActv)
+            sys.exit()           
 
             sigDer = self.sigmoidDerivate(hiddenSum)
             sumInputsSigDer = np.dot(inputsV.T, sigDer * sumDiffOutActvPesosOut)
