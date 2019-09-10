@@ -90,10 +90,40 @@ class ImgController():
         return img
 
     def cropImg(self, img):
-        img = Image.open('../Data/DataTest/Img/captcha.jpg')
-        # imgCropped = img.crop((50,15,200,40)) #odo o  numero
-        imgCropped = img.crop((50,15,80,40)) 
-        imgCropped.save('../Data/DataTest/Img/cropped_captcha.jpg')
+        import time
+        img = Image.open('../Data/DataTest/Img/c1.jpg')
+        x = img.size[0]
+        y = img.size[1]
+
+        greyscale_image = img.convert('L')
+        greyscale_image.save('../Data/DataTest/Img/cb.jpg')
+
+
+        # print(x)
+        # print(y)
+        for ix in range(x):
+            for iy in range(y):
+                print(img.getpixel((ix,iy)))
+                print(iy)
+                if iy != 0:   
+                    if iy % 59 == 0:
+                        print("Coluna " + str(ix))
+                        print("###########################################")
+                        print()
+                        if ix == 2:
+                            sys.exit()
+
+        # for i in range()
+        # imgCropped = img.crop((50,10,200,40)) #todo o  numero
+        # imgCropped = img.crop((50,10,80,40)) #primeiro
+        # imgCropped = img.crop((80,10,100,40)) #segundo
+        # imgCropped = img.crop((100,10,125,40)) #terceiro
+        # imgCropped = img.crop((125,10,150,40)) # quarto
+        # imgCropped = img.crop((150,10,175,40)) #quinto
+        # imgCropped = img.crop((175,10,200,40)) #sexta
+
+        # imgCropped = img.crop((40,10,70,45)) #primeiro
+        # imgCropped.save('../Data/DataTest/Img/cropped_captcha.jpg')
 
     
     def toNegative(self, pathOld, pathNew):
@@ -101,4 +131,15 @@ class ImgController():
         im_invert = ImageOps.invert(img)
         im_invert.save(pathNew, quality=100)
 
-# ImgController().cropImg(None)
+
+
+ImgController().cropImg(None)
+
+def change_contrast(img, level):
+    factor = (259 * (level + 255)) / (255 * (259 - level))
+    def contrast(c):
+        value = 128 + factor * (c - 128)
+        return max(0, min(255, value))
+    return img.point(contrast)
+
+# change_contrast(Image.open('../Data/DataTest/Img/c1.jpg'), 256).save('../Data/DataTest/Img/cb.jpg')
